@@ -140,7 +140,7 @@
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \nUNIX_TIMESTAMP(th.create_time) as time_sec,\ncount(*) as value,\nts.name as metric\nFROM ticket_history th\nJOIN ticket t ON (th.ticket_id=t.id)\nJOIN users u ON (th.owner_id=u.id)\nJOIN ticket_state ts ON (th.state_id=ts.id)\nJOIN ticket_state_type tst ON (ts.type_id=tst.id)\nWHERE\ntst.name = 'closed'\nAND th.history_type_id = 27\nAND $__timeFilter(th.create_time)",
+          "rawSql": "SELECT \nUNIX_TIMESTAMP(th.create_time) as time_sec,\ncount(*) as value,\ntst.name as metric\nFROM ticket_history th\nJOIN ticket t ON (th.ticket_id=t.id)\nJOIN users u ON (th.owner_id=u.id)\nJOIN ticket_state ts ON (th.state_id=ts.id)\nJOIN ticket_state_type tst ON (ts.type_id=tst.id)\nWHERE\ntst.name = 'closed'\nAND th.history_type_id = 27\nAND $__timeFilter(th.create_time)\nGROUP BY th.create_time, tst.name",
           "refId": "A"
         }
       ],
@@ -220,7 +220,7 @@
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \nUNIX_TIMESTAMP(survey_request.create_time) as time_sec,\ncount(survey_request.id) as value,\n'chamados' as metric\nFROM survey_request\nWHERE\n$__timeFilter(survey_request.create_time)\n\n",
+          "rawSql": "SELECT \nUNIX_TIMESTAMP(survey_request.create_time) as time_sec,\ncount(survey_request.id) as value,\n'chamados' as metric\nFROM survey_request\nWHERE\n$__timeFilter(survey_request.create_time)\nGROUP BY survey_request.create_time, survey_request.id\n",
           "refId": "A"
         }
       ],
@@ -300,7 +300,7 @@
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \nUNIX_TIMESTAMP(survey_request.vote_time) as time_sec,\ncount(survey_request.id) as value,\n'chamados' as metric\nFROM survey_request\nWHERE\nvote_time IS NOT NULL\nAND\n$__timeFilter(survey_request.vote_time)\n\n",
+          "rawSql": "SELECT \nUNIX_TIMESTAMP(survey_request.vote_time) as time_sec,\ncount(survey_request.id) as value,\n'chamados' as metric\nFROM survey_request\nWHERE\nvote_time IS NOT NULL\nAND\n$__timeFilter(survey_request.vote_time)\nGROPU BY survey_request.vote_time, survey_request.id\n",
           "refId": "A"
         }
       ],
@@ -359,7 +359,7 @@
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \n$__timeGroup(survey_request.vote_time,'24h') as time_sec,\ncount(survey_request.id) as value,\n'Respostas' as metric\nFROM survey_request\nWHERE\nvote_time IS NOT NULL\nAND\n$__timeFilter(survey_request.vote_time)\nGROUP BY 1\nORDER BY 1\n\n",
+          "rawSql": "SELECT \n$__timeGroup(survey_request.vote_time,'24h') as time_sec,\ncount(survey_request.id) as value,\n'Respostas' as metric\nFROM survey_request\nWHERE\nvote_time IS NOT NULL\nAND\n$__timeFilter(survey_request.vote_time)\nGROUP BY vote_value, sv.create_time, sa.answer\nORDER BY 1\n\n",
           "refId": "A"
         }
       ],
